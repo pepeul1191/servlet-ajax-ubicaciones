@@ -35,6 +35,7 @@ public class DistritoBuscarServlet extends HttpServlet {
       rptaTry.put("tipo_mensaje", "error");
       rptaTry.put("mensaje", error);
       rpta = rptaTry.toString();
+      response.setStatus(500);
     } finally {
       response.setContentType("text/html;charset=UTF-8");
       response.getWriter().write(rpta);
