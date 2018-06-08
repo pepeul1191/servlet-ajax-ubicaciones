@@ -4,12 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {padding: 20px; font-family: Arial, Helvetica, sans-serif; font-size: 14px}
+    body {padding: 20px; font-family: Arial, Helvetica, sans-serif; font-size: 14px;}
     #txtDistrito, #ulSugerencias{width:400px}
     #txtDistrito{padding: 5px;}
     </style>
     <script type="text/javascript">
-      var BASE_URL = "http://localhost:8080/ajax/";
+      //var BASE_URL = "http://localhost:8080/ajax/";
+      var BASE_URL = "http://localhost:3000/";
     </script>
 </head>
 <body>
@@ -19,15 +20,35 @@
   <script type="text/javascript">
     function buscar() {
       var nombre = document.getElementById("txtDistrito").value;
-      var ajax = new XMLHttpRequest();
-      ajax.open("GET", BASE_URL + "distrito/buscar?nombre=" + nombre, true);
-      ajax.send();
-      ajax.onload = function() {
-        if (ajax.status === 200) {
-          console.log(ajax.responseText);
+      if(nombre != ""){
+        var ajax = new XMLHttpRequest();
+        ajax.open("GET", BASE_URL + "distrito/buscar?nombre=" + nombre, true);
+        ajax.send();
+        ajax.onload = function() {
+          if (ajax.status === 200) {
+            var responseData = JSON.parse(ajax.responseText);
+            var ulSugerencias = document.getElementById("ulSugerencias");
+             //borar sugerencias anteriores
+            while(ulSugerencias.firstChild){
+              ulSugerencias.removeChild(ulSugerencias.firstChild);
+            }
+            //llenar sugerencias
+            for(var i = 0; i < responseData.length; i++){
+              var li = document.createElement("li");
+              li.classList.add("sugerencia");
+              li.setAttribute("id", responseData[i].id);
+              var textLi = document.createTextNode(responseData[i].nombre);
+              li.appendChild(textLi);
+              ulSugerencias.appendChild(li); 
+            }
+          }else {
+            console.error(ajax.responseText);
+          }
         }
-        else {
-          console.error(ajax.responseText);
+      }else{
+        var ulSugerencias = document.getElementById("ulSugerencias");
+        while(ulSugerencias.firstChild){
+          ulSugerencias.removeChild(ulSugerencias.firstChild);
         }
       }
     }
